@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+
+# compiled output
+/.build
+/dist
+
+# IDEs and editors
+/.idea
+/.vscode
+
+# misc
+package-lock.json
+npm-debug.log
+yarn-error.log
+
+# System Files
+.DS_Store
+Thumbs.db
