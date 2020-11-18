@@ -1,23 +1,31 @@
-import * as React from 'react';
-import { hydrate } from 'react-dom';
+import * as React from 'react'
+import ReactDOM from 'react-dom'
+// import { createBrowserHistory } from 'history'
+import App from '../common/app'
 
-import { createBrowserHistory } from 'history';
+// let reduxState = {}
+//
+// if (window.__REDUX_STATE__) {
+//   try {
+//     reduxState = JSON.parse(decodeURIComponent(window.__REDUX_STATE__))
+//     window.__REDUX_STATE__ = undefined
+//   } catch (e) {}
+// }
 
-import App from '../common/App';
+const $root = document.getElementById('root')
+// const history = window.history || createBrowserHistory()
+// const store = configureStore({ history }, reduxState);
 
-const browserHistory = window.browserHistory || createBrowserHistory();
+const render = Component => {
+  const renderMethod = module.hot ? ReactDOM.render : ReactDOM.hydrate
+  renderMethod(<Component />, $root)
+}
 
-const store = window.store;
+render(App)
 
-hydrate(<App />, document.getElementById('app'));
-
-if (process.env.NODE_ENV === 'development') {
-  if (module.hot) {
-    module.hot.accept();
-  }
-  
-  if (!window.store || !window.browserHistory) {
-    window.browserHistory = browserHistory;
-    window.store = store;
-  }
+if (module.hot) {
+  module.hot.accept('../common/app', () => {
+    const NewApp = require('../common/app').default
+    render(NewApp)
+  })
 }

@@ -1,200 +1,106 @@
-const path = require('path');
-const webpack = require('webpack');
-const nodeExternals = require('webpack-node-externals');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { resolve } = require('path')
+const { merge } = require('webpack-merge')
+const nodeExternals = require('webpack-node-externals')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const common = require('./common.config')
 
-module.exports = [
-  {
-    name: 'client',
-    
-    mode: 'production',
-    
-    entry: {
-      bundle: path.resolve(__dirname, '../app/client/index.js'),
-    },
-    
-    output: {
-      path: path.resolve(__dirname, '../dist'),
-      publicPath: '/dist/',
-      filename: '[name].[hash:8].js',
-    },
-    
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
-        },
-        {
-          test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
-          type: 'asset/resource',
-        },
-        {
-          test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
-          type: 'asset/inline',
-        },
-        {
-          test: /\.(scss|css)$/,
-          use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
-        },
-        {
-          test: /\.(scss|css)$/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 2,
-                sourceMap: false,
-              },
-            },
-            'postcss-loader',
-            'sass-loader',
-          ],
-        },
-      ],
-    },
-    
-    resolve: {
-      modules: [path.resolve(__dirname, '../app'), 'node_modules'],
-    },
-    
-    devtool: 'source-map',
-    
-    target: 'web',
-    
-    stats: {
-      cached: false,
-      cachedAssets: false,
-      chunks: false,
-      chunkModules: false,
-      colors: true,
-      hash: false,
-      modules: false,
-      reasons: false,
-      timings: true,
-      version: false,
-    },
-    
-    plugins: [
-      new CleanWebpackPlugin(),
-      new MiniCssExtractPlugin({
-        filename: 'styles/[name].[contenthash].css',
-        chunkFilename: '[id].css',
-      }),
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: path.resolve(__dirname, '../assets'),
-            to: 'assets',
-            globOptions: {
-              ignore: ['*.DS_Store'],
-            },
-          },
-        ],
-      }),
-    ],
-    
-    node: {
-      dgram: 'empty',
-      fs: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      child_process: 'empty',
-    },
-    
-    optimization: {
-      minimize: true,
-      minimizer: [new CssMinimizerPlugin(), "..."],
-      runtimeChunk: {
-        name: 'runtime',
-      },
-    },
-    performance: {
-      hints: false,
-      maxEntrypointSize: 512000,
-      maxAssetSize: 512000,
-    },
+const clientConfig = () => merge(common, {
+  name: 'client',
+
+  mode: 'production',
+
+  entry: './app/client',
+
+  output: {
+    path: resolve(__dirname, '../dist'),
+    publicPath: '/dist/',
+    filename: 'js/[name].[contenthash].bundle.js'
   },
-  {
-    name: 'server',
-    
-    mode: 'production',
-    
-    entry: {
-      bundle: path.resolve(__dirname, '../app/server/index.js'),
-    },
-    
-    output: {
-      path: path.resolve(__dirname, '../dist'),
-      filename: 'server.js',
-      libraryTarget: 'commonjs2',
-    },
-    
-    module: {
-      rules: [
+
+  target: 'web',
+
+  plugins: [
+    new CleanWebpackPlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
         {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
-        },
-        {
-          test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
-          type: 'asset/resource',
-        },
-        {
-          test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
-          type: 'asset/inline',
-        },
-        {
-          test: /\.(scss|css)$/,
-          use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
-        },
-        {
-          test: /\.(scss|css)$/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 2,
-                sourceMap: false,
-              },
-            },
-            'postcss-loader',
-            'sass-loader',
-          ],
-        },
-      ],
-    },
-    
-    resolve: {
-      modules: [path.resolve(__dirname, '../app'), 'node_modules'],
-    },
-    
-    target: 'node',
-    
-    stats: {
-      colors: true,
-    },
-    
-    externals: [
-      nodeExternals({
-        whitelist: /\.css$/,
-      }),
-    ],
-    
-    node: {
-      __dirname: true,
-      __filename: true,
-    },
+          from: resolve(__dirname, '../assets'),
+          to: 'assets',
+          globOptions: {
+            ignore: ['*.DS_Store']
+          }
+        }
+      ]
+    }),
+    () => ({
+      'postcss-preset-env': {
+        browsers: 'last 2 versions'
+      }
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'styles/[name].[contenthash].css',
+      chunkFilename: '[id].css'
+    }),
+    new HtmlWebpackPlugin({
+      title: 'React Starter Kit',
+      template: resolve(__dirname, '../app/client/template.html'),
+      filename: 'index.html'
+    })
+  ],
+
+  optimization: {
+    minimize: true,
+    minimizer: [new CssMinimizerPlugin(), '...'],
+    runtimeChunk: {
+      name: 'runtime'
+    }
   },
-];
+
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  }
+})
+
+const serverConfig = () => merge(common, {
+  name: 'server',
+
+  mode: 'production',
+
+  entry: './app/server',
+
+  output: {
+    path: resolve(__dirname, '../dist'),
+    publicPath: '/dist/',
+    filename: 'server.js',
+    libraryTarget: 'commonjs2'
+  },
+
+  target: 'node',
+
+  resolve: {
+    extensions: ['.js', '.jsx', '.css', '.scss'],
+    modules: [
+      resolve(__dirname, '../app'),
+      'node_modules'
+    ]
+  },
+
+  externals: [
+    nodeExternals({
+      allowlist: /\.css$/
+    })
+  ],
+
+  node: {
+    __dirname: true,
+    __filename: true
+  }
+})
+
+module.exports = [clientConfig(), serverConfig()]

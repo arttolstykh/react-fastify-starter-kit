@@ -1,19 +1,20 @@
-import path from 'path';
-import fastify from "fastify";
+import { join } from 'path'
+import fastify from 'fastify'
 import serverRenderer from './server-renderer'
 
-module.exports = () => {
-  const app = fastify({
-    logger: true
-  });
-  
-  app.register(require('fastify-static'), {
-    root: path.join(process.cwd(), 'build/public')
-  });
-  
-  app.get('/', serverRenderer())
-  
-  app.listen(3000, () => {
-    console.log(`[app] - ${new Date()}`, `🌍 http://localhost:3000`);
+const dev = process.env.NODE_ENV === 'development'
+
+const server = fastify({ logger: dev })
+
+server
+  .register(require('fastify-cors'))
+  .register(require('fastify-static'), {
+    root: join(process.cwd(), dev ? '.build' : 'dist')
   })
-}
+
+server.get('/', serverRenderer())
+
+server.listen(3000).catch(error => {
+  console.log('Error starting server:', { error })
+  process.exit(1)
+})
