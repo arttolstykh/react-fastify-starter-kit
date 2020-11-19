@@ -75,7 +75,7 @@ Base structure:
 		/routes
 			index.js
 		/selectors
-            index.js
+			index.js
 		/services
 		/store
 			index.js
