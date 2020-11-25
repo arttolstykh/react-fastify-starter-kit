@@ -1,10 +1,10 @@
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-# Custom project
+# 👾 Full-stack Boilerplate
 
-Full-stack Boilerplate
+## Installation:
 
-## Install:
+Clone this repo and npm install.
 
 ```bash
 npm install
@@ -52,6 +52,8 @@ Base structure:
 
 ```
 	/client
+		index.js
+		template.html
 	/common
 		/app
 			index.js
@@ -80,4 +82,10 @@ Base structure:
 		/store
 			index.js
 	/server
+		index.js
+		renderer.js
 ```
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).

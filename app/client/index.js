@@ -1,24 +1,36 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-// import { createBrowserHistory } from 'history'
+import { Provider } from 'react-redux'
+import { Router as HashRouter } from 'react-router-dom'
+import { createBrowserHistory } from 'history'
+import configureStore from '../common/store'
 import App from '../common/app'
 
-// let reduxState = {}
-//
-// if (window.__REDUX_STATE__) {
-//   try {
-//     reduxState = JSON.parse(decodeURIComponent(window.__REDUX_STATE__))
-//     window.__REDUX_STATE__ = undefined
-//   } catch (e) {}
-// }
+let reduxState = {}
+
+if (window.__REDUX_STATE__) {
+  try {
+    reduxState = JSON.parse(decodeURIComponent(window.__REDUX_STATE__))
+    window.__REDUX_STATE__ = undefined
+  } catch (e) {}
+}
 
 const $root = document.getElementById('root')
-// const history = window.history || createBrowserHistory()
-// const store = configureStore({ history }, reduxState);
+const store = configureStore(reduxState)
+const history = createBrowserHistory()
 
 const render = Component => {
   const renderMethod = module.hot ? ReactDOM.render : ReactDOM.hydrate
-  renderMethod(<Component />, $root)
+  renderMethod(
+    (
+      <Provider store={store}>
+        <HashRouter history={history}>
+          <Component />
+        </HashRouter>
+      </Provider>
+    ),
+    $root
+  )
 }
 
 render(App)

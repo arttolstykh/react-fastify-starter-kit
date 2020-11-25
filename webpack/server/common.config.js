@@ -1,4 +1,13 @@
+const { resolve } = require('path')
+const nodeExternals = require('webpack-node-externals')
+
 module.exports = {
+  target: 'node',
+
+  entry: {
+    server: resolve(__dirname, '../../app/server/index.js')
+  },
+
   module: {
     rules: [
       {
@@ -14,7 +23,10 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-              importLoaders: 1
+              importLoaders: 1,
+              modules: {
+                exportOnlyLocals: true
+              }
             }
           },
           {
@@ -38,5 +50,20 @@ module.exports = {
         type: 'asset/inline'
       }
     ]
+  },
+
+  externals: [nodeExternals()],
+
+  resolve: {
+    extensions: ['.js', '.jsx', '.css', '.scss'],
+    modules: [
+      resolve(__dirname, '../app'),
+      'node_modules'
+    ]
+  },
+
+  node: {
+    __dirname: true,
+    __filename: true
   }
 }
