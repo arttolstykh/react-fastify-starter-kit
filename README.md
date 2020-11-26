@@ -24,22 +24,6 @@ npm start
 npm run develop
 ```
 
-### Front-end Development
-
-```
-npm run start:client
-```
-
-Listen: `http://localhost:4000`
-
-### Back-end Development
-
-```
-npm run start:server
-```
-
-Listen: `http://localhost:3000`
-
 ### Test
 
 ```
