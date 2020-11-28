@@ -1,8 +1,8 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-import { Router as HashRouter } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import configureStore from '../common/store'
 import App from '../common/app'
 
@@ -15,18 +15,18 @@ if (window.__REDUX_STATE__) {
   } catch (e) {}
 }
 
-const $root = document.getElementById('root')
-const store = configureStore(reduxState)
 const history = createBrowserHistory()
+const store = configureStore(history, reduxState)
+const $root = document.getElementById('root')
 
 const render = Component => {
   const renderMethod = module.hot ? ReactDOM.render : ReactDOM.hydrate
   renderMethod(
     (
       <Provider store={store}>
-        <HashRouter history={history}>
+        <ConnectedRouter history={history}>
           <Component />
-        </HashRouter>
+        </ConnectedRouter>
       </Provider>
     ),
     $root

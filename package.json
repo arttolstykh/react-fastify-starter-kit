@@ -29,6 +29,7 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "*",
     "clsx": "*",
+    "connected-react-router": "*",
     "fastify": "*",
     "fastify-cors": "*",
     "fastify-plugin": "*",
